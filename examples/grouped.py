@@ -5,9 +5,9 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from starlette.responses import JSONResponse
 
-from fastapi_ratelimiter import RateLimited, RedisDependencyMarker
-from fastapi_ratelimiter.strategies import BucketingRateLimitStrategy
-from fastapi_ratelimiter.types import RateLimitStatus
+from fastapi_ratelimit import RateLimited, RedisDependencyMarker
+from fastapi_ratelimit.strategies import BucketingRateLimitStrategy
+from fastapi_ratelimit.types import RateLimitStatus
 
 app = FastAPI()
 redis = aioredis.from_url("redis://localhost:6400", decode_responses=True, encoding="utf-8")

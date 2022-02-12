@@ -8,7 +8,7 @@ from starlette.requests import Request
 from starlette.responses import Response, PlainTextResponse
 from starlette.types import ASGIApp
 
-from fastapi_ratelimiter.strategies import AbstractRateLimitStrategy
+from fastapi_ratelimit.strategies import AbstractRateLimitStrategy
 
 
 def _default_response_on_limit_exceeded(r: Request) -> Response:
