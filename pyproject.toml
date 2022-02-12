@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "fastapi-ratelimiter"
+version = "0.0.1"
+description = ""
+authors = ["Gleb Garanin <glebgar567@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+fastapi = "^0.73.0"
+aioredis = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+uvicorn = "^0.17.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
