@@ -21,12 +21,10 @@ theme:
 
   palette:
     scheme: slate
-    primary: black
-    accent: blue
+    primary: blue grey
 
   font:
-    text: Roboto Mono
-    code: Monaco
+    code: Fira Code
 
   favicon: logo.png
 
