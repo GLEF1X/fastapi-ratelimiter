@@ -3,6 +3,7 @@ from fastapi import Depends
 from starlette.responses import JSONResponse
 
 from fastapi_ratelimit import RateLimited, RedisDependencyMarker
+from fastapi_ratelimit.strategies import BucketingRateLimitStrategy
 
 app.dependency_overrides[RedisDependencyMarker] = aioredis.from_url("redis://localhost")
 
@@ -14,4 +15,4 @@ app.dependency_overrides[RedisDependencyMarker] = aioredis.from_url("redis://loc
     ]
 )
 async def handle_test_endpoint():
-    return {"hello": "world", **asdict(ratelimit_status)}
+    return {"hello": "world"}
