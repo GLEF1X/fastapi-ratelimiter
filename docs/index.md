@@ -5,12 +5,12 @@ Welcome to **FastAPI-ratelimit** documentation!
 ## Quickstart
 Install using poetry:
 ```bash
-poetry add fastapi-ratelimit
+poetry add fastapi-ratelimiter
 ```
 
 Install using pip: 
 ```bash
-pip install fastapi-ratelimit
+pip install fastapi-ratelimiter
 ```
 
 

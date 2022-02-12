@@ -1,4 +1,4 @@
-# FastAPI Ratelimit
+# FastAPI Ratelimiter
 
 [![PyPI version](https://img.shields.io/pypi/v/fastapi-ratelimiter.svg)]
 
@@ -15,8 +15,8 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from starlette.responses import JSONResponse
 
-from fastapi_ratelimit import RateLimited, RedisDependencyMarker
-from fastapi_ratelimit.strategies import BucketingRateLimitStrategy
+from fastapi_ratelimiter import RateLimited, RedisDependencyMarker
+from fastapi_ratelimiter.strategies import BucketingRateLimitStrategy
 
 app = FastAPI()
 redis = aioredis.from_url("redis://localhost", decode_responses=True, encoding="utf-8")

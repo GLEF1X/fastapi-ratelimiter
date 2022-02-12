@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fastapi-ratelimit"
+name = "fastapi-ratelimiter"
 version = "0.0.1"
 description = "Redis-based rate-limiting for FastAPI"
 authors = ["GLEF1X"]
@@ -8,7 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/GLEF1X/fastapi-ratelimit"
 repository = "https://github.com/GLEF1X/fastapi-ratelimit"
 packages = [
-    { include = "./fastapi_ratelimit" }
+    { include = "./fastapi_ratelimiter" }
 ]
 maintainers = [
     "GLEF1X <glebgar567@gmail.com>",

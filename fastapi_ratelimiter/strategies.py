@@ -8,8 +8,8 @@ from typing import Sequence, Union, Callable, Optional, Awaitable
 from aioredis.client import Pipeline, Redis
 from starlette.requests import Request
 
-from fastapi_ratelimit.types import RateLimitConfig, RateLimitStatus
-from fastapi_ratelimit.utils import extract_ip_from_request
+from fastapi_ratelimiter.types import RateLimitConfig, RateLimitStatus
+from fastapi_ratelimiter.utils import extract_ip_from_request
 
 DEFAULT_PREFIX = "rl:"
 

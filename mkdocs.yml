@@ -1,9 +1,9 @@
-site_name: fastapi-ratelimit
-name: fastapi-ratelimit
+site_name: fastapi-ratelimiter
+name: fastapi-ratelimiter
 site_description: Redis-based rate-limiting for FastAPI
 site_author: GLEF1X
-repo_name: GLEF1X/fastapi-ratelimit
-repo_url: https://github.com/GLEF1X/fastapi-ratelimit
+repo_name: GLEF1X/fastapi-ratelimiter
+repo_url: https://github.com/GLEF1X/fastapi-ratelimiter
 edit_uri: edit/master/docs/
 
 

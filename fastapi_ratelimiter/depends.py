@@ -6,8 +6,8 @@ from aioredis import Redis
 from fastapi import Depends, HTTPException
 from starlette.requests import Request
 
-from fastapi_ratelimit.strategies import AbstractRateLimitStrategy
-from fastapi_ratelimit.types import RateLimitConfig, RateLimitStatus
+from fastapi_ratelimiter.strategies import AbstractRateLimitStrategy
+from fastapi_ratelimiter.types import RateLimitConfig, RateLimitStatus
 
 
 class RedisDependencyMarker:
