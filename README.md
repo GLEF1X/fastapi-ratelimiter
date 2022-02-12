@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/fastapi-ratelimiter.svg)]
 
-**Documentation**: https://fastapi-ratelimiter.readthedocs.io/en/latest/ 
+**Documentation**: https://fastapi-ratelimit.readthedocs.io/en/latest/
 
 ## Quick start:
 
@@ -19,7 +19,7 @@ from fastapi_ratelimiter import RateLimited, RedisDependencyMarker
 from fastapi_ratelimiter.strategies import BucketingRateLimitStrategy
 
 app = FastAPI()
-redis = aioredis.from_url("redis://localhost", decode_responses=True, encoding="utf-8")
+redis = aioredis.from_url("redis://localhost")
 
 
 @app.get(
@@ -35,6 +35,6 @@ async def handle_test_endpoint():
 
 app.dependency_overrides[RedisDependencyMarker] = lambda: redis
 
-uvicorn.run(app)
-
+if __name__ == '__main__':
+    uvicorn.run(app)
 ```

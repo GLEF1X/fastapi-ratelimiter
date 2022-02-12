@@ -9,15 +9,16 @@ from fastapi_ratelimiter import RateLimited, RedisDependencyMarker
 from fastapi_ratelimiter.strategies import BucketingRateLimitStrategy
 from fastapi_ratelimiter.types import RateLimitStatus
 
+redis = aioredis.from_url("redis://localhost")
 app = FastAPI()
-redis = aioredis.from_url("redis://localhost:6400", decode_responses=True, encoding="utf-8")
+app.dependency_overrides[RedisDependencyMarker] = aioredis.from_url("redis://localhost")
 
 
 @app.get("/handler1", response_class=JSONResponse)
 async def handler1(
         ratelimit_status: RateLimitStatus = Depends(
             RateLimited(
-                BucketingRateLimitStrategy(rate="10/60s", group="my_group")
+                BucketingRateLimitStrategy(rate="10/h", group="expensive")
             )
         )
 ):
@@ -28,13 +29,12 @@ async def handler1(
 async def handler2(
         ratelimit_status: RateLimitStatus = Depends(
             RateLimited(
-                BucketingRateLimitStrategy(rate="10/60s", group="my_group"),
+                BucketingRateLimitStrategy(rate="10/h", group="expensive"),
             )
         )
 ):
     return {"hello": "world", **asdict(ratelimit_status)}
 
 
-app.dependency_overrides[RedisDependencyMarker] = lambda: redis
-
-uvicorn.run(app)
+if __name__ == '__main__':
+    uvicorn.run(app)

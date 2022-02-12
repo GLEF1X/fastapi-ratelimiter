@@ -9,6 +9,8 @@ edit_uri: edit/master/docs/
 
 nav:
   - HUB: index.md
+  - Cookbook: cookbook.md
+  - Rates: rates.md
 
 theme:
   name: material

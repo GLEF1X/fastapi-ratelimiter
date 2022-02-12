@@ -101,33 +101,38 @@ class BucketingRateLimitStrategy(AbstractRateLimitStrategy):
 
 class SlidingWindowLimitStrategy(AbstractRateLimitStrategy):
     async def get_ratelimit_status(self, request: Request) -> RateLimitStatus:
-        request_identifier = await self._get_request_identifier(request)
-        group_name = f"{self._group}:" if self._group is not None else ""
-        storage_key = f"{group_name}{self._prefix}:{request_identifier}"
-
-        epoch_ms = int(time.time() * 1000)
-        period_in_seconds = self._ratelimit_config.period_in_seconds
+        storage_key = await self._create_storage_key(request)
+        epoch_time = int(time.time() * 1000)
 
         redis: Redis = request.state.redis
         async with redis.pipeline() as pipe:  # type: Pipeline
             result = await (
                 pipe.zremrangebyscore(
-                    storage_key, 0, epoch_ms - (period_in_seconds * 100)
+                    storage_key, 0, epoch_time - (self._ratelimit_config.period_in_seconds * 100)
                 ).zadd(
                     storage_key,
-                    {
-                        f"{epoch_ms}:1": epoch_ms
-                    }
+                    {f"{epoch_time}:1": epoch_time}
                 ).zrange(
                     storage_key, 0, -1
                 ).expire(
-                    storage_key, (period_in_seconds * 1000) + 1
+                    storage_key, (self._ratelimit_config.period_in_seconds * 1000) + 1
                 ).execute()
             )
 
-        number_of_requests = sum(int(i.split(':')[-1]) for i in result[2])
+        number_of_requests = 0
+        for set_key in result[2]:  # type: str
+            if isinstance(set_key, bytes):
+                set_key = set_key.decode("utf-8")
+
+            number_of_requests += int(set_key.split(':')[-1])
+
         return RateLimitStatus(
             number_of_requests=number_of_requests,
             ratelimit_config=self._ratelimit_config,
             time_left=-1
         )
+
+    async def _create_storage_key(self, request: Request):
+        request_identifier = await self._get_request_identifier(request)
+        group_name = f"{self._group}:" if self._group is not None else ""
+        return f"{group_name}{self._prefix}:{request_identifier}"

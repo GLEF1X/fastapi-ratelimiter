@@ -2,6 +2,8 @@
 
 Welcome to **FastAPI-ratelimit** documentation!
 
+For beginners, it is recommended to read the [cookbook](cookbook.md)
+
 ## Quickstart
 Install using poetry:
 ```bash

@@ -45,8 +45,8 @@ class GlobalRateLimitMiddleware(BaseRateLimitMiddleware):
         self._rate_limit_strategy = rate_limit_strategy
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        should_limit = await self._rate_limit_strategy.get_ratelimit_status(request)
-        if should_limit:
+        ratelimit_status = await self._rate_limit_strategy.get_ratelimit_status(request)
+        if ratelimit_status.should_limit:
             return await self._execute_response_on_limit_exceeded_callback(request)
 
         return await call_next(request)

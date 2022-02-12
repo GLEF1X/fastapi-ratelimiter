@@ -13,7 +13,6 @@ _PERIODS = {
 # Following regexp catches such strings:
 #    100/5m
 #    100/300s
-
 rate_re = re.compile(r'([\d]+)/([\d]*)([smhd])?')
 
 

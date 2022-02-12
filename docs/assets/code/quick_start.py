@@ -1,10 +1,11 @@
 import aioredis
-from fastapi import Depends
+from fastapi import Depends, FastAPI
 from starlette.responses import JSONResponse
 
 from fastapi_ratelimiter import RateLimited, RedisDependencyMarker
 from fastapi_ratelimiter.strategies import BucketingRateLimitStrategy
 
+app = FastAPI()
 app.dependency_overrides[RedisDependencyMarker] = aioredis.from_url("redis://localhost")
 
 
