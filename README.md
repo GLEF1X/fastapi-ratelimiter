@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/fastapi-ratelimiter.svg)]
 
-**Documentation**: https://fastapi-ratelimit.readthedocs.io/en/latest/ 
+**Documentation**: https://fastapi-ratelimiter.readthedocs.io/en/latest/ 
 
 ## Quick start:
 
