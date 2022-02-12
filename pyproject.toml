@@ -1,8 +1,18 @@
 [tool.poetry]
 name = "fastapi-ratelimit"
 version = "0.0.1"
-description = ""
-authors = ["Gleb Garanin <glebgar567@gmail.com>"]
+description = "Redis-based rate-limiting for FastAPI"
+authors = ["GLEF1X"]
+keywords = ["python", "fastapi", "asgi", "asyncio", "aiohttp", "ratelimit", "redis"]
+readme = "README.md"
+homepage = "https://github.com/GLEF1X/fastapi-ratelimit"
+repository = "https://github.com/GLEF1X/fastapi-ratelimit"
+packages = [
+    { include = "./fastapi_ratelimit" }
+]
+maintainers = [
+    "GLEF1X <glebgar567@gmail.com>",
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"

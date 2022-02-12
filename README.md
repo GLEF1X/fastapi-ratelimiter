@@ -1,6 +1,6 @@
 # FastAPI Ratelimit
-[![PyPI version](https://img.shields.io/pypi/v/fastapi-ratelimiter.svg)]
 
+[![PyPI version](https://img.shields.io/pypi/v/fastapi-ratelimiter.svg)]
 
 ## Quick start:
 
@@ -20,10 +20,12 @@ app = FastAPI()
 redis = aioredis.from_url("redis://localhost", decode_responses=True, encoding="utf-8")
 
 
-@app.get("/some_expensive_call", response_class=JSONResponse,
-         dependencies=[
-             Depends(RateLimited(BucketingRateLimitStrategy(rate="10/60s")))
-         ])
+@app.get(
+    "/some_expensive_call", response_class=JSONResponse,
+    dependencies=[
+        Depends(RateLimited(BucketingRateLimitStrategy(rate="10/60s")))
+    ]
+)
 async def handle_test_endpoint():
     await asyncio.sleep(5)
     return {"hello": "world"}

@@ -1,0 +1,44 @@
+site_name: fastapi-ratelimit
+name: fastapi-ratelimit
+site_description: Redis-based rate-limiting for FastAPI
+site_author: GLEF1X
+repo_name: GLEF1X/fastapi-ratelimit
+repo_url: https://github.com/GLEF1X/fastapi-ratelimit
+edit_uri: edit/master/docs/
+
+
+nav:
+  - HUB: index.md
+
+theme:
+  name: material
+  language: en
+
+  features:
+    - content.code.annotate
+
+  palette:
+    scheme: slate
+    primary: black
+    accent: blue
+
+  font:
+    text: Roboto Mono
+    code: Monaco
+
+  favicon: logo.png
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.magiclink
+  - toc:
+      permalink: True
+  - pymdownx.snippets:
+      check_paths: true
+
+extra_css:
+  - _css/style.css
