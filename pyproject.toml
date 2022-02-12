@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-ratelimiter"
-version = "0.0.1"
+version = "0.0.2"
 description = "Redis-based rate-limiting for FastAPI"
 authors = ["GLEF1X"]
 keywords = ["python", "fastapi", "asgi", "asyncio", "aiohttp", "ratelimit", "redis"]
