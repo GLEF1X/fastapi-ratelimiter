@@ -3,13 +3,12 @@ import hashlib
 import inspect
 import time
 import zlib
-from dataclasses import dataclass
 from typing import Sequence, Union, Callable, Optional, Awaitable
 
 from aioredis.client import Pipeline, Redis
 from starlette.requests import Request
 
-from fastapi_ratelimiter.config import RateLimitConfig
+from fastapi_ratelimiter.types import RateLimitConfig, RateLimitStatus
 from fastapi_ratelimiter.utils import extract_ip_from_request
 
 DEFAULT_PREFIX = "rl:"
@@ -19,38 +18,21 @@ EXPIRATION_FUDGE = 5
 RequestIdentifierFactoryType = Callable[[Request], Union[str, bytes, Awaitable[Union[str, bytes]]]]
 
 
-@dataclass
-class RateLimitStatus:
-    number_of_requests: int
-    ratelimit_config: RateLimitConfig
-    time_left: int
-
-    @property
-    def remaining_number_of_requests(self) -> int:
-        return self.limit - self.number_of_requests
-
-    @property
-    def limit(self) -> int:
-        return self.ratelimit_config.max_count
-
-    @property
-    def should_limit(self) -> bool:
-        return self.number_of_requests > self.limit
-
-
 class AbstractRateLimitStrategy(abc.ABC):
 
     def __init__(
             self,
             rate: str,
             prefix: str = DEFAULT_PREFIX,
-            request_identifier_factory: Optional[RequestIdentifierFactoryType] = None
+            request_identifier_factory: Optional[RequestIdentifierFactoryType] = None,
+            group: Optional[str] = None
     ):
         if request_identifier_factory is None:
             request_identifier_factory = extract_ip_from_request
-        self._request_identifier = request_identifier_factory
+        self._request_identifier_factory = request_identifier_factory
         self._ratelimit_config = RateLimitConfig.from_string(rate)
         self._prefix = prefix
+        self._group = group
 
     @abc.abstractmethod
     async def get_ratelimit_status(self, request: Request) -> RateLimitStatus:
@@ -58,12 +40,12 @@ class AbstractRateLimitStrategy(abc.ABC):
 
     async def _get_request_identifier(self, request: Request) -> Union[str, bytes]:
         if (
-                inspect.iscoroutine(self._request_identifier)
-                or inspect.iscoroutinefunction(self._request_identifier)
+                inspect.iscoroutine(self._request_identifier_factory)
+                or inspect.iscoroutinefunction(self._request_identifier_factory)
         ):
             return await self._response_on_limit_exceeded(request)  # type: ignore
 
-        return self._request_identifier(request)
+        return self._request_identifier_factory(request)
 
 
 class BucketingRateLimitStrategy(AbstractRateLimitStrategy):
@@ -71,7 +53,7 @@ class BucketingRateLimitStrategy(AbstractRateLimitStrategy):
     async def get_ratelimit_status(self, request: Request) -> RateLimitStatus:
         request_identifier = await self._get_request_identifier(request)
         window = self._get_window(request_identifier)
-        storage_key = self._create_storage_key(request, request_identifier, str(window))
+        storage_key = self._create_storage_key(request_identifier, str(window))
 
         redis: Redis = request.state.redis
         async with redis.pipeline() as pipe:  # type: Pipeline
@@ -89,11 +71,14 @@ class BucketingRateLimitStrategy(AbstractRateLimitStrategy):
             time_left=window - int(time.time())
         )
 
-    def _create_storage_key(self, *parts) -> str:
+    def _create_storage_key(self, *parts: str) -> str:
         safe_rate = '%d/%ds' % (self._ratelimit_config.max_count, self._ratelimit_config.period_in_seconds)
-        return self._prefix + hashlib.md5(u''.join((safe_rate, *parts)).encode('utf-8')).hexdigest()
+        key_parts = [safe_rate, *parts]
+        if self._group is not None:
+            key_parts.insert(0, self._group)
+        return self._prefix + hashlib.md5(u''.join(key_parts).encode('utf-8')).hexdigest()
 
-    async def _get_window(self, request_identifier: Union[str, bytes]) -> int:
+    def _get_window(self, request_identifier: Union[str, bytes]) -> int:
         """
         Given a request identifier, and time period return when the end of the current time
         period for rate evaluation is.
@@ -117,7 +102,8 @@ class BucketingRateLimitStrategy(AbstractRateLimitStrategy):
 class SlidingWindowLimitStrategy(AbstractRateLimitStrategy):
     async def get_ratelimit_status(self, request: Request) -> RateLimitStatus:
         request_identifier = await self._get_request_identifier(request)
-        storage_key = f"{self._prefix}:{request_identifier}"
+        group_name = f"{self._group}:" if self._group is not None else ""
+        storage_key = f"{group_name}{self._prefix}:{request_identifier}"
 
         epoch_ms = int(time.time() * 1000)
         period_in_seconds = self._ratelimit_config.period_in_seconds

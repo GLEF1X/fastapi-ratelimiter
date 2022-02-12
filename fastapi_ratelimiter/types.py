@@ -33,3 +33,21 @@ class RateLimitConfig:
             seconds *= int(multi)
         return cls(request_count_per_period, seconds)
 
+
+@dataclass
+class RateLimitStatus:
+    number_of_requests: int
+    ratelimit_config: RateLimitConfig
+    time_left: int
+
+    @property
+    def remaining_number_of_requests(self) -> int:
+        return self.limit - self.number_of_requests
+
+    @property
+    def limit(self) -> int:
+        return self.ratelimit_config.max_count
+
+    @property
+    def should_limit(self) -> bool:
+        return self.number_of_requests > self.limit

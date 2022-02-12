@@ -6,8 +6,8 @@ from aioredis import Redis
 from fastapi import Depends, HTTPException
 from starlette.requests import Request
 
-from fastapi_ratelimiter.config import RateLimitConfig
-from fastapi_ratelimiter.strategies import AbstractRateLimitStrategy, RateLimitStatus
+from fastapi_ratelimiter.types import RateLimitConfig, RateLimitStatus
+from fastapi_ratelimiter.strategies import AbstractRateLimitStrategy
 
 T = TypeVar("T", bound=Callable[..., Any])
 
@@ -40,13 +40,18 @@ class RateLimited:
         self._response_on_limit_exceeded = response_on_limit_exceeded
         self._http_methods = methods
 
-    async def __call__(self, request: Request,
-                       redis: Redis = Depends(RedisDependencyMarker)) -> RateLimitStatus:
+    async def __call__(
+            self,
+            request: Request,
+            redis: Redis = Depends(RedisDependencyMarker)
+    ) -> RateLimitStatus:
         if self._http_methods is not None:
             if request.method not in self._http_methods:
-                return RateLimitStatus(number_of_requests=0,
-                                       ratelimit_config=RateLimitConfig(max_count=0, period_in_seconds=0),
-                                       time_left=0)
+                return RateLimitStatus(
+                    number_of_requests=0,
+                    ratelimit_config=RateLimitConfig(max_count=0, period_in_seconds=0),
+                    time_left=0
+                )
 
         request.state.redis = redis
 
